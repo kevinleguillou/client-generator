@@ -78,7 +78,7 @@ function ListView ({error, loading, retrieved}: ListProps) {
 }
 
 export default function List (props: RouteComponentProps<any>) {
-  const id = (props.match.params.page && decodeURIComponent(props.match.params.page)) || "books";
+  const id = (props.match.params.page && decodeURIComponent(props.match.params.page)) || "{{{name}}}";
 
   const {retrieved, loading, error} = useRetrieve<PagedCollection<TResource>>(id);
 

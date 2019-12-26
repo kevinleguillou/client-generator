@@ -46,7 +46,7 @@ function CreateView ({create, created, error, loading}: CreateProps) {
 }
 
 export default function Create () {
-  const {created, loading, error, create} = useCreate<TResource>({"@id": "books"});
+  const {created, loading, error, create} = useCreate<TResource>({"@id": "{{{name}}}"});
 
   return <CreateView
     created={created}
