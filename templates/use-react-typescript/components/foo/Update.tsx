@@ -50,10 +50,10 @@ function UpdateView ({created, del, deleteError, deleteLoading, deleted, retriev
       {(retrieveLoading ||
         updateLoading ||
         deleteLoading) && (
-         <div className="alert alert-info" role="status">
+        <div className="alert alert-info" role="status">
            Loading...
-         </div>
-       )}
+        </div>
+      )}
       {retrieveError && (
         <div className="alert alert-danger" role="alert">
           <span className="fa fa-exclamation-triangle" aria-hidden="true" />{" "}

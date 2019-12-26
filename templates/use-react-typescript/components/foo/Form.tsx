@@ -32,28 +32,30 @@ export default function Form ({onSubmit, error, initialValues}: FormProps) {
     onSubmit(
       {
         ...values,
-  {{#each formFields}}
-    {{#if reference ~}}{{#unless maxCardinality ~}}
+{{#each formFields ~}}
+  {{#if reference ~}}
+    {{#unless maxCardinality}}
         {{{name}}}: normalizeLinks(values["{{{name}}}"]),
-    {{/unless ~}}{{/if ~}}
-    {{#if number ~}}
+    {{/unless}}
+  {{/if ~}}
+  {{#if number}}
         {{{name}}}: (v: string) => parseFloat(v)
-    {{/if ~}}
-  {{/each}}
-},
-    )
-  }
+  {{/if}}
+{{/each}}
+      },
+    );
+  };
 
   return (
     <form onSubmit={handleSubmit}>
 {{#each formFields}}
-        <Field
-          input={text("{{{name}}}")}
-          meta=\{{
-            error: formState.errors["{{{name}}}"]|| errors["{{{name}}}"],
-            touched: formState.touched["{{{name}}}"],
-          }}
-        />
+      <Field
+        input={text("{{{name}}}")}
+        meta=\{{
+          error: formState.errors["{{{name}}}"]|| errors["{{{name}}}"],
+          touched: formState.touched["{{{name}}}"],
+        }}
+      />
 {{/each}}
 
       <button type="submit" className="btn btn-success">

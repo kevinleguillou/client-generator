@@ -21,27 +21,27 @@ function CreateView ({create, created, error, loading}: CreateProps) {
     );
   }
 
-    return (
-      <div>
-        <h1>New {{{title}}}</h1>
+  return (
+    <div>
+      <h1>New {{{title}}}</h1>
 
-        {loading && (
-          <div className="alert alert-info" role="status">
+      {loading && (
+        <div className="alert alert-info" role="status">
             Loading...
-          </div>
-        )}
-        {error && (
-          <div className="alert alert-danger" role="alert">
+        </div>
+      )}
+      {error && (
+        <div className="alert alert-danger" role="alert">
           <span className="fa fa-exclamation-triangle" aria-hidden="true"/>{" "}
-            {error.message}
-          </div>
-        )}
+          {error.message}
+        </div>
+      )}
 
-        <Form onSubmit={create} error={error}/>
-        <Link to="." className="btn btn-primary">
+      <Form onSubmit={create} error={error}/>
+      <Link to="." className="btn btn-primary">
           Back to list
-        </Link>
-      </div>
+      </Link>
+    </div>
   );
 }
 

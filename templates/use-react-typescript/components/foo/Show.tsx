@@ -49,36 +49,36 @@ function ShowView ({del, deleteError, deleted, error, loading, retrieved: item}:
       )}
 
       {item && (
-          <table className="table table-responsive table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Field</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>
+        <table className="table table-responsive table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
 {{#each fields}}
-              <tr>
-                <th scope="row">{{name}}</th>
-                <td>{{#if reference}}<Links type="{{{reference.name}}}" items={item["{{{name}}}"]}/>{{else}}{item["{{{name}}}"]}{{/if}}</td>
-              </tr>
+            <tr>
+              <th scope="row">{{name}}</th>
+              <td>{{#if reference}}<Links type="{{{reference.name}}}" items={item["{{{name}}}"]}/>{{else}}{item["{{{name}}}"]}{{/if}}</td>
+            </tr>
 {{/each}}
-            </tbody>
-          </table>
-        )}
-        <Link to=".." className="btn btn-primary">
-          Back to list
+          </tbody>
+        </table>
+      )}
+      <Link to=".." className="btn btn-primary">
+        Back to list
+      </Link>
+      {item && (
+        <Link to={`/{{{name}}}/edit/${encodeURIComponent(item["@id"])}`}>
+          <button className="btn btn-warning">Edit</button>
         </Link>
-        {item && (
-          <Link to={`/{{{name}}}/edit/${encodeURIComponent(item["@id"])}`}>
-            <button className="btn btn-warning">Edit</button>
-          </Link>
-        )}
-        <button onClick={delWithConfirm} className="btn btn-danger">
-          Delete
-        </button>
-      </div>
-    );
+      )}
+      <button onClick={delWithConfirm} className="btn btn-danger">
+        Delete
+      </button>
+    </div>
+  );
 }
 
 export default function Show (props: RouteComponentProps<any>) {
