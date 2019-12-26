@@ -56,6 +56,7 @@ test("Generate a Typescript React app", () => {
     "/stores/fetch.tsx",
     "/stores/index.tsx",
     "/stores/list.tsx",
+    "/stores/mercure.tsx",
     "/stores/retrieve.tsx",
     "/stores/show.tsx",
     "/stores/update.tsx"

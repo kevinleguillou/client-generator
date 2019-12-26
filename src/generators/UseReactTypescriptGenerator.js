@@ -16,6 +16,7 @@ export default class UseReactTypescriptGenerator extends BaseGenerator {
       "stores/fetch.tsx",
       "stores/index.tsx",
       "stores/list.tsx",
+      "stores/mercure.tsx",
       "stores/retrieve.tsx",
       "stores/update.tsx",
       "stores/show.tsx",
@@ -128,6 +129,7 @@ import ${titleLc}Routes from './routes/${titleLc}';
       "stores/fetch.tsx",
       "stores/index.tsx",
       "stores/list.tsx",
+      "stores/mercure.tsx",
       "stores/retrieve.tsx",
       "stores/update.tsx",
       "stores/show.tsx",
@@ -162,7 +164,8 @@ import ${titleLc}Routes from './routes/${titleLc}';
           type: this.getType(field),
           description: this.getDescription(field),
           readonly: false,
-          reference: field.reference
+          reference: field.reference,
+          maxCardinality: field.maxCardinality
         }
       };
     }, {});

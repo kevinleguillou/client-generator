@@ -52,7 +52,7 @@ export default function Form ({onSubmit, error, initialValues}: FormProps) {
       <Field
         input={text("{{{name}}}")}
         meta=\{{
-          error: formState.errors["{{{name}}}"]|| errors["{{{name}}}"],
+          error: formState.errors["{{{name}}}"] || errors["{{{name}}}"],
           touched: formState.touched["{{{name}}}"],
         }}
       />

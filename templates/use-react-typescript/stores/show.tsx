@@ -1,13 +1,13 @@
 import React from "react";
 import { ApiResource, TError } from "../utils/types";
-import { extractHubURL, normalize } from "../utils/dataAccess";
+import { normalize } from "../utils/dataAccess";
 import useFetch from "./fetch";
+import useMercure from "./mercure";
 
 interface IShowStore<Resource extends ApiResource> {
   error: TError;
   loading: boolean;
   retrieved: Resource | null;
-  // eventSource: EventSource | null;
   retrieve: (id: string) => any;
   reset: (/*eventSource: EventSource | null*/) => any;
 }
@@ -17,6 +17,25 @@ export default function useShow<Resource extends ApiResource> (): IShowStore<Res
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<TError>(null);
   const [retrieved, setRetrieved] = React.useState<Resource | null>(null);
+  const {deleted, message, onResponse} = useMercure<Resource>(retrieved);
+
+  const subscribeMercure = ({response, json}: {response: Response; json: any;}) => {
+    onResponse(response);
+
+    return json;
+  };
+
+  React.useEffect(() => {
+    if (deleted) {
+      setError(new Error(`${deleted["@id"]} has been deleted by another user.`));
+    }
+  }, [deleted]);
+
+  React.useEffect(() => {
+    if (message) {
+      setRetrieved(message);
+    }
+  }, [message]);
 
   return {
     error,
@@ -32,15 +51,8 @@ export default function useShow<Resource extends ApiResource> (): IShowStore<Res
       setError(null);
 
       return fetch(id)
-        .then(({response, json}) => (
-          // @TODO: Use hubURL
-          {retrieved: json, hubURL: extractHubURL(response)}
-        ))
-        .then(({retrieved}) => {
-          retrieved = normalize(retrieved);
-
-          setRetrieved(retrieved);
-        })
+        .then(subscribeMercure)
+        .then((retrieved) => setRetrieved(normalize(retrieved)))
         .catch(e => setError(e.message))
         .finally(() => setLoading(false));
     },
