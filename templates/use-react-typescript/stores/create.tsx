@@ -1,8 +1,8 @@
-import React from 'react'
-import { IResource, SubmissionError, TError } from '../utils/types'
-import { fetchApi } from '../utils/dataAccess'
+import React from "react";
+import { ApiResource, SubmissionError, TError } from "../utils/types";
+import useFetch from "./fetch";
 
-interface ICreateStore<Resource extends IResource> {
+interface ICreateStore<Resource extends ApiResource> {
   error: TError;
   loading: boolean;
   created: Resource | null;
@@ -10,34 +10,34 @@ interface ICreateStore<Resource extends IResource> {
   create: (values: Partial<Resource>) => Promise<void>;
 }
 
-export default function useCreate<Resource extends IResource> (params: { '@id': string; }): ICreateStore<Resource> {
-  const [loading, setLoading] = React.useState(false)
-  const [error, setError] = React.useState<TError>(null)
-  const [created, setCreated] = React.useState<Resource | null>(null)
+export default function useCreate<Resource extends ApiResource> (params: { "@id": string; }): ICreateStore<Resource> {
+  const {fetch} = useFetch();
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<TError>(null);
+  const [created, setCreated] = React.useState<Resource | null>(null);
 
   return {
     error,
     loading,
     created,
     reset () {
-      setLoading(false)
-      setError(null)
+      setLoading(false);
+      setError(null);
     },
     create (values) {
-      setLoading(true)
+      setLoading(true);
 
-      return fetchApi(params['@id'], {method: 'POST', body: JSON.stringify(values)})
-        .then(response => response.json())
+      return fetch(params["@id"], {method: "POST", body: JSON.stringify(values)})
+        .then(({json}) => json)
         .then(retrieved => setCreated(retrieved))
         .catch(e => {
           if (e instanceof SubmissionError) {
-            setError(e.errors._error)
-            throw e
+            setError(e);
           }
 
-          setError(e.message)
+          setError(e);
         })
-        .finally(() => setLoading(false))
+        .finally(() => setLoading(false));
     },
-  }
+  };
 }

@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react";
 
-interface IFieldProps {
+interface FieldProps {
   input: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
   meta: {
     touched?: boolean;
@@ -8,17 +8,17 @@ interface IFieldProps {
   };
 }
 
-export default function Field (data: IFieldProps) {
-  data.input.className = 'form-control'
+export default function Field (data: FieldProps): React.ReactElement {
+  data.input.className = "form-control";
 
-  const isInvalid = data.meta.touched && !!data.meta.error
+  const isInvalid = data.meta.touched && !!data.meta.error;
   if (isInvalid) {
-    data.input.className += ' is-invalid'
-    data.input['aria-invalid'] = true
+    data.input.className += " is-invalid";
+    data.input["aria-invalid"] = true;
   }
 
   if (data.meta.error && data.meta.touched && !data.meta.error) {
-    data.input.className += ' is-valid'
+    data.input.className += " is-valid";
   }
 
   return (
@@ -29,5 +29,5 @@ export default function Field (data: IFieldProps) {
       <input {...data.input}/>
       {isInvalid && <div className="invalid-feedback">{data.meta.error}</div>}
     </div>
-  )
+  );
 }

@@ -1,68 +1,57 @@
-import React from 'react'
-import { Link, Redirect } from 'react-router-dom'
-import { TError } from '../../utils/types'
-import { I{{{ucf}}} } from '../../interfaces/{{{ucf}}}'
-import { useCreate } from '../../stores'
-import Form from './Form';
+import React from "react";
+import { Link, Redirect } from "react-router-dom";
+import { TError } from "../../utils/types";
+import TResource from "./type";
+import { useCreate } from "../../stores";
+import Form from "./Form";
 
-interface ICreateProps {
-  created: I{{{ucf}}} | null;
+interface CreateProps {
+  created: TResource | null;
   loading: boolean;
   error: TError;
+  create: (item: Partial<TResource>) => any;
 }
 
-interface ICreateActions {
-  reset: () => any;
-  create: ({{{lc}}}: Partial<I{{{ucf}}}>) => any;
-}
-
-class CreateView extends React.Component<ICreateProps & ICreateActions> {
-  componentWillUnmount () {
-    this.props.reset()
+function CreateView ({create, created, error, loading}: CreateProps) {
+  if (created) {
+    return (
+      <Redirect
+        to={`edit/${encodeURIComponent(created["@id"])}`}
+      />
+    );
   }
-
-  render () {
-    if (this.props.created) {
-      return (
-        <Redirect
-          to={`edit/${encodeURIComponent(this.props.created['@id'])}`}
-        />
-      )
-    }
 
     return (
       <div>
         <h1>New {{{title}}}</h1>
 
-        {this.props.loading && (
+        {loading && (
           <div className="alert alert-info" role="status">
             Loading...
           </div>
         )}
-        {this.props.error && (
+        {error && (
           <div className="alert alert-danger" role="alert">
-            <span className="fa fa-exclamation-triangle" aria-hidden="true"/>{' '}
-            {this.props.error}
+          <span className="fa fa-exclamation-triangle" aria-hidden="true"/>{" "}
+            {error.message}
           </div>
         )}
 
-        <Form onSubmit={this.props.create}/>
+        <Form onSubmit={create} error={error}/>
         <Link to="." className="btn btn-primary">
           Back to list
         </Link>
       </div>
-    )
-  }
+  );
 }
 
 export default function Create () {
-  const {created, loading, error, reset, create} = useCreate<I{{{ucf}}}>({'@id': '{{{name}}}'})
+  const {created, loading, error, create} = useCreate<TResource>({"@id": "books"});
 
   return <CreateView
     created={created}
     loading={loading}
     error={error}
-    reset={reset}
     create={create}
-  />
+  />;
 }

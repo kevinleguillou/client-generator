@@ -1,51 +1,26 @@
-import React from 'react'
-import { IResource, TError } from '../utils/types'
-import { IPagedCollection } from '../interfaces/Collection'
-import { extractHubURL, fetchApi, normalize } from '../utils/dataAccess'
+import { ApiResource, TError } from "../utils/types";
+import { PagedCollection } from "../interfaces/Collection";
+import useShow from "./show";
 
-interface IListStore<Resource extends IResource> {
+interface IListStore<Resource extends ApiResource> {
   error: TError;
   loading: boolean;
-  retrieved: IPagedCollection<Resource> | null;
+  retrieved: PagedCollection<Resource> | null;
   // eventSource: EventSource | null;
   reset: (/*eventSource: EventSource | null*/) => any;
   list: (page?: string) => Promise<void>;
 }
 
-export default function useList<Resource extends IResource> (params: { '@id': string; }): IListStore<Resource> {
-  const [loading, setLoading] = React.useState(false)
-  const [error, setError] = React.useState<TError>(null)
-  const [retrieved, setRetrieved] = React.useState<IPagedCollection<Resource> | null>(null)
+export default function useList<Resource extends ApiResource> (params: { "@id": string; }): IListStore<Resource> {
+  const {error, loading, retrieved, retrieve, reset} = useShow<PagedCollection<Resource>>();
 
   return {
     error,
     loading,
     retrieved,
-    reset () {
-      setError(null)
-      setLoading(false)
-      setRetrieved(null)
+    reset,
+    list (page = params["@id"]) {
+      return retrieve(page);
     },
-    list (page = params['@id']) {
-      setLoading(true)
-      setError(null)
-
-      return fetchApi(page)
-        .then(
-          response => response
-            .json()
-            .then(retrieved => (
-              // @TODO: Use hubURL
-              {retrieved, hubURL: extractHubURL(response)}
-            )),
-        )
-        .then(({retrieved}) => {
-          retrieved = normalize(retrieved)
-
-          setRetrieved(retrieved)
-        })
-        .catch(e => setError(e.message))
-        .finally(() => setLoading(false))
-    },
-  }
+  };
 }

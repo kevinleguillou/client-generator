@@ -13,8 +13,10 @@ export default class UseReactTypescriptGenerator extends BaseGenerator {
       // stores
       "stores/create.tsx",
       "stores/delete.tsx",
+      "stores/fetch.tsx",
       "stores/index.tsx",
       "stores/list.tsx",
+      "stores/retrieve.tsx",
       "stores/update.tsx",
       "stores/show.tsx",
 
@@ -28,8 +30,11 @@ export default class UseReactTypescriptGenerator extends BaseGenerator {
       "components/foo/index.tsx",
       "components/foo/List.tsx",
       "components/foo/Update.tsx",
+      "components/foo/type.ts",
       "components/foo/Show.tsx",
       "components/Field.tsx",
+      "components/Links.tsx",
+      "components/Pagination.tsx",
 
       // routes
       "routes/foo.tsx"
@@ -93,6 +98,7 @@ import ${titleLc}Routes from './routes/${titleLc}';
       "components/%s/index.tsx",
       "components/%s/List.tsx",
       "components/%s/Update.tsx",
+      "components/%s/type.ts",
       "components/%s/Show.tsx",
 
       // routes
@@ -113,12 +119,16 @@ import ${titleLc}Routes from './routes/${titleLc}';
 
       // components
       "components/Field.tsx",
+      "components/Links.tsx",
+      "components/Pagination.tsx",
 
       // stores
       "stores/create.tsx",
       "stores/delete.tsx",
+      "stores/fetch.tsx",
       "stores/index.tsx",
       "stores/list.tsx",
+      "stores/retrieve.tsx",
       "stores/update.tsx",
       "stores/show.tsx",
 

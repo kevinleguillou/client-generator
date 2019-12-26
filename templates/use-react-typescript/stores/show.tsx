@@ -1,8 +1,9 @@
-import React from 'react'
-import { IResource, TError } from '../utils/types'
-import { extractHubURL, fetchApi, normalize } from '../utils/dataAccess'
+import React from "react";
+import { ApiResource, TError } from "../utils/types";
+import { extractHubURL, normalize } from "../utils/dataAccess";
+import useFetch from "./fetch";
 
-interface IShowStore<Resource extends IResource> {
+interface IShowStore<Resource extends ApiResource> {
   error: TError;
   loading: boolean;
   retrieved: Resource | null;
@@ -11,40 +12,37 @@ interface IShowStore<Resource extends IResource> {
   reset: (/*eventSource: EventSource | null*/) => any;
 }
 
-export default function useShow<Resource extends IResource> (): IShowStore<Resource> {
-  const [loading, setLoading] = React.useState(false)
-  const [error, setError] = React.useState<TError>(null)
-  const [retrieved, setRetrieved] = React.useState<Resource | null>(null)
+export default function useShow<Resource extends ApiResource> (): IShowStore<Resource> {
+  const {fetch} = useFetch();
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<TError>(null);
+  const [retrieved, setRetrieved] = React.useState<Resource | null>(null);
 
   return {
     error,
     loading,
     retrieved,
     reset () {
-      setError(null)
-      setLoading(false)
-      setRetrieved(null)
+      setError(null);
+      setLoading(false);
+      setRetrieved(null);
     },
     retrieve (id) {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
-      return fetchApi(id)
-        .then(
-          response => response
-            .json()
-            .then(retrieved => (
-              // @TODO: Use hubURL
-              {retrieved, hubURL: extractHubURL(response)}
-            )),
-        )
+      return fetch(id)
+        .then(({response, json}) => (
+          // @TODO: Use hubURL
+          {retrieved: json, hubURL: extractHubURL(response)}
+        ))
         .then(({retrieved}) => {
-          retrieved = normalize(retrieved)
+          retrieved = normalize(retrieved);
 
-          setRetrieved(retrieved)
+          setRetrieved(retrieved);
         })
         .catch(e => setError(e.message))
-        .finally(() => setLoading(false))
+        .finally(() => setLoading(false));
     },
-  }
+  };
 }

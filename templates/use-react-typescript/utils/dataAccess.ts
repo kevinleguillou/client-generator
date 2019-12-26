@@ -1,78 +1,19 @@
-import { ENTRYPOINT } from '../config/entrypoint'
-import { ISubmissionErrors, SubmissionError } from './types'
+import { ENTRYPOINT } from "../config/entrypoint";
 
-const MIME_TYPE = 'application/ld+json'
-
-export function fetchApi (id: string, options: RequestInit = {}) {
-  if (!(
-    options.headers instanceof Headers
-  )) {
-    options.headers = new Headers(options.headers)
-  }
-  if (null === options.headers.get('Accept')) {
-    options.headers.set('Accept', MIME_TYPE)
-  }
-
-  if (
-    'undefined' !== options.body &&
-    !(
-      options.body instanceof FormData
-    ) &&
-    null === options.headers.get('Content-Type')
-  ) {
-    options.headers.set('Content-Type', MIME_TYPE)
-  }
-
-  return fetch(String(new URL(id, ENTRYPOINT)), options).then(response => {
-    if (response.ok) {
-      return response
-    }
-
-    return response.json().then(
-      json => {
-        const error =
-          json['hydra:description'] ||
-          json['hydra:title'] ||
-          'An error occurred.'
-        if (!json.violations) {
-          throw Error(error)
-        }
-
-        const violations: { propertyPath: string; message: string; }[] = json.violations
-        const errors = violations
-          .reduce((errors, violation) => {
-            if (errors[violation.propertyPath]) {
-              errors[violation.propertyPath] += '\n' + violation.message
-            } else {
-              errors[violation.propertyPath] = violation.message
-            }
-
-            return errors
-          }, {_error: error} as ISubmissionErrors)
-
-        throw new SubmissionError(errors)
-      },
-      () => {
-        throw new Error(response.statusText || 'An error occurred.')
-      },
-    )
-  })
-}
-
-export function mercureSubscribe (url: URL, topics: string[]) {
+export function mercureSubscribe (url: URL, topics: string[]): EventSource {
   topics.forEach(
-    topic => url.searchParams.append('topic', String(new URL(topic, ENTRYPOINT))),
-  )
+    topic => url.searchParams.append("topic", String(new URL(topic, ENTRYPOINT))),
+  );
 
-  return new EventSource(url.toString())
+  return new EventSource(url.toString());
 }
 
-export function normalize<A extends { [key: string]: any; 'hydra:member'?: A[]; }> (data: A) {
-  if (data.hasOwnProperty('hydra:member') && data['hydra:member']) {
+export function normalize<A extends { [key: string]: any; "hydra:member"?: A[]; }> (data: A): A {
+  if (data["hydra:member"]) {
     // Normalize items in collections
-    data['hydra:member'] = data['hydra:member'].map(item => normalize(item))
+    data["hydra:member"] = data["hydra:member"].map(item => normalize(item));
 
-    return data
+    return data;
   }
 
   // Flatten nested documents
@@ -81,36 +22,36 @@ export function normalize<A extends { [key: string]: any; 'hydra:member'?: A[]; 
     .reduce(
       (a, [key, value]) => {
         a[key] = Array.isArray(value)
-          ? value.map(v => v && v.hasOwnProperty('@id') ? v['@id'] : v)
-          : value && value.hasOwnProperty('@id') ? value['@id'] : value
+          ? value.map(v => v && v["@id"] ? v["@id"] : v)
+          : value && value["@id"] ? value["@id"] : value;
 
-        return a
+        return a;
       },
       {} as any,
-    )
+    );
 }
 
 export function extractHubURL (response: Response) {
-  const linkHeader = response.headers.get('Link')
+  const linkHeader = response.headers.get("Link");
   if (!linkHeader) {
-    return null
+    return null;
   }
 
   const matches = linkHeader.match(
     /<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/,
-  )
+  );
 
-  return matches && matches[1] ? new URL(matches[1], ENTRYPOINT) : null
+  return matches && matches[1] ? new URL(matches[1], ENTRYPOINT) : null;
 }
 
 export function normalizeLinks (value: string | string[] | undefined): string[] {
   if (!value) {
-    return []
+    return [];
   }
 
-  if (typeof value === 'string') {
-    return value.split(',')
+  if (typeof value === "string") {
+    return value.split(",");
   }
 
-  return value
+  return value;
 }

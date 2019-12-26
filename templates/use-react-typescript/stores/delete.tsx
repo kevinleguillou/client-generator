@@ -1,8 +1,8 @@
-import React from 'react'
-import { IResource, TError } from '../utils/types'
-import { fetchApi } from '../utils/dataAccess'
+import React from "react";
+import { ApiResource, TError } from "../utils/types";
+import useFetch from "./fetch";
 
-interface IDeleteStore<Resource extends IResource> {
+interface IDeleteStore<Resource extends ApiResource> {
   error: TError;
   loading: boolean;
   deleted: Resource | null;
@@ -10,10 +10,11 @@ interface IDeleteStore<Resource extends IResource> {
   del: (item: Resource) => Promise<void>;
 }
 
-export default function useDelete<Resource extends IResource> (): IDeleteStore<Resource> {
-  const [loading, setLoading] = React.useState(false)
-  const [error, setError] = React.useState<TError>(null)
-  const [deleted, setDeleted] = React.useState<Resource | null>(null)
+export default function useDelete<Resource extends ApiResource> (): IDeleteStore<Resource> {
+  const {fetch} = useFetch();
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<TError>(null);
+  const [deleted, setDeleted] = React.useState<Resource | null>(null);
 
   return {
     loading,
@@ -21,12 +22,13 @@ export default function useDelete<Resource extends IResource> (): IDeleteStore<R
     deleted,
     setDeleted,
     del (item: Resource) {
-      setLoading(true)
+      setLoading(true);
 
-      return fetchApi(item['@id'], {method: 'DELETE'})
+      return fetch(item["@id"], {method: "DELETE"})
+        .then(({json}) => json)
         .then(() => setDeleted(item))
         .catch(e => setError(e.message))
-        .finally(() => setLoading(false))
+        .finally(() => setLoading(false));
     },
-  }
+  };
 }

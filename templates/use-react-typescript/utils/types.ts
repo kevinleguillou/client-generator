@@ -1,24 +1,24 @@
-export type TError = Error | string | null;
+export type TError = SubmissionError | Error | null;
 
-export interface IResource {
-  '@id': string;
+export interface ApiResource {
+  "@id": string;
 }
 
-export interface ISubmissionErrors {
+export interface SubmissionErrors {
   _error: string;
 
   [p: string]: string;
 }
 
 export class SubmissionError extends Error {
-  private readonly _errors: ISubmissionErrors
+  private readonly _errors: SubmissionErrors
 
-  constructor (errors: ISubmissionErrors) {
-    super(errors._error)
-    this._errors = errors
+  constructor (errors: SubmissionErrors) {
+    super(errors._error);
+    this._errors = errors;
   }
 
-  public get errors (): ISubmissionErrors {
-    return this._errors
+  public get errors (): SubmissionErrors {
+    return this._errors;
   }
 }

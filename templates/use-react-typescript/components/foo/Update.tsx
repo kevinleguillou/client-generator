@@ -1,117 +1,102 @@
-import React from 'react'
-import { RouteComponentProps } from 'react-router'
-import { Link, Redirect } from 'react-router-dom'
-import { I{{{ucf}}} } from '../../interfaces/{{{ucf}}}'
-import { TError } from '../../utils/types'
-import Form from './Form'
-import { useDelete, useShow, useUpdate } from '../../stores'
+import React from "react";
+import { RouteComponentProps } from "react-router";
+import { Link, Redirect } from "react-router-dom";
+import TResource from "./type";
+import { TError } from "../../utils/types";
+import Form from "./Form";
+import { useDelete, useRetrieve, useUpdate } from "../../stores";
 
-interface IUpdateProps {
-  retrieved: I{{{ucf}}} | null;
+interface UpdateProps {
+  retrieved: TResource | null;
   retrieveLoading: boolean;
   retrieveError: TError;
   updateLoading: boolean;
   updateError: TError;
   deleteLoading: boolean;
   deleteError: TError;
-  created: I{{{ucf}}} | null;
-  updated: I{{{ucf}}} | null;
-  deleted: I{{{ucf}}} | null;
-  eventSource: EventSource | null;
+  created: TResource | null;
+  updated: TResource | null;
+  deleted: TResource | null;
+  del: (item: TResource) => any;
+  update: (item: TResource, values: Partial<TResource>) => any;
 }
 
-interface IUpdateActions {
-  retrieve: (id: string) => any;
-  reset: (eventSource: EventSource | null) => any;
-  del: ({{{lc}}}: I{{{ucf}}}) => any;
-  update: ({{{lc}}}: I{{{ucf}}}, values: Partial<I{{{ucf}}}>) => any;
-}
-
-type TUpdateProps = RouteComponentProps<any> & IUpdateProps & IUpdateActions;
-
-class UpdateView extends React.Component<TUpdateProps> {
-  componentDidMount() {
-    this.props.retrieve(decodeURIComponent(this.props.match.params.id));
+function UpdateView ({created, del, deleteError, deleteLoading, deleted, retrieveError, retrieveLoading, retrieved, update, updateError, updateLoading, updated}: UpdateProps) {
+  if (deleted) {
+    return <Redirect to=".."/>;
   }
 
-  componentWillUnmount() {
-    this.props.reset(this.props.eventSource);
-  }
-
-  del = () => {
-    if (this.props.retrieved && window.confirm('Are you sure you want to delete this item?'))
-      this.props.del(this.props.retrieved);
+  const item = updated ? updated : retrieved;
+  const delWithConfirm = () => {
+    if (retrieved && window.confirm("Are you sure you want to delete this item?")) {
+      del(retrieved);
+    }
   };
 
-  render() {
-    if (this.props.deleted) return <Redirect to=".." />;
+  return (
+    <div>
+      <h1>Edit {item && item["@id"]}</h1>
 
-    const item = this.props.updated ? this.props.updated : this.props.retrieved;
+      {created && (
+        <div className="alert alert-success" role="status">
+          {created["@id"]} created.
+        </div>
+      )}
+      {updated && (
+        <div className="alert alert-success" role="status">
+          {updated["@id"]} updated.
+        </div>
+      )}
+      {(retrieveLoading ||
+        updateLoading ||
+        deleteLoading) && (
+         <div className="alert alert-info" role="status">
+           Loading...
+         </div>
+       )}
+      {retrieveError && (
+        <div className="alert alert-danger" role="alert">
+          <span className="fa fa-exclamation-triangle" aria-hidden="true" />{" "}
+          {retrieveError.message}
+        </div>
+      )}
+      {updateError && (
+        <div className="alert alert-danger" role="alert">
+          <span className="fa fa-exclamation-triangle" aria-hidden="true" />{" "}
+          {updateError.message}
+        </div>
+      )}
+      {deleteError && (
+        <div className="alert alert-danger" role="alert">
+          <span className="fa fa-exclamation-triangle" aria-hidden="true" />{" "}
+          {deleteError.message}
+        </div>
+      )}
 
-    return (
-      <div>
-        <h1>Edit {item && item['@id']}</h1>
-
-        {this.props.created && (
-          <div className="alert alert-success" role="status">
-            {this.props.created['@id']} created.
-          </div>
-        )}
-        {this.props.updated && (
-          <div className="alert alert-success" role="status">
-            {this.props.updated['@id']} updated.
-          </div>
-        )}
-        {(this.props.retrieveLoading ||
-          this.props.updateLoading ||
-          this.props.deleteLoading) && (
-          <div className="alert alert-info" role="status">
-            Loading...
-          </div>
-        )}
-        {this.props.retrieveError && (
-          <div className="alert alert-danger" role="alert">
-            <span className="fa fa-exclamation-triangle" aria-hidden="true" />{' '}
-            {this.props.retrieveError}
-          </div>
-        )}
-        {this.props.updateError && (
-          <div className="alert alert-danger" role="alert">
-            <span className="fa fa-exclamation-triangle" aria-hidden="true" />{' '}
-            {this.props.updateError}
-          </div>
-        )}
-        {this.props.deleteError && (
-          <div className="alert alert-danger" role="alert">
-            <span className="fa fa-exclamation-triangle" aria-hidden="true" />{' '}
-            {this.props.deleteError}
-          </div>
-        )}
-
-        {item && (
-          <Form
-            onSubmit={values => this.props.update(item, values)}
-            initialValues={item}
-          />
-        )}
-        <Link to=".." className="btn btn-primary">
-          Back to list
-        </Link>
-        <button onClick={this.del} className="btn btn-danger">
-          Delete
-        </button>
-      </div>
-    );
-  }
+      {item && (
+        <Form
+          onSubmit={values => update(item, values)}
+          error={updateError}
+          initialValues={item}
+        />
+      )}
+      <Link to=".." className="btn btn-primary">
+        Back to list
+      </Link>
+      <button onClick={delWithConfirm} className="btn btn-danger">
+        Delete
+      </button>
+    </div>
+  );
 }
 
 export default function Update (props: RouteComponentProps<any>) {
-  const {retrieved, loading: retrieveLoading, error: retrieveError, retrieve, reset: retrieveReset} = useShow<I{{{ucf}}}>()
-  const {updated, update, reset: updateReset, loading: updateLoading, error: updateError} = useUpdate<I{{{ucf}}}>()
-  const {deleted, loading: deleteLoading, error: deleteError, del} = useDelete<I{{{ucf}}}>()
+  const id = decodeURIComponent(props.match.params.id);
+  const {retrieved, loading: retrieveLoading, error: retrieveError} = useRetrieve<TResource>(id);
+  const {updated, update, loading: updateLoading, error: updateError} = useUpdate<TResource>();
+  const {deleted, loading: deleteLoading, error: deleteError, del} = useDelete<TResource>();
 
   return <UpdateView
-    {...props}
     retrieved={retrieved}
     retrieveLoading={retrieveLoading}
     retrieveError={retrieveError}
@@ -122,13 +107,7 @@ export default function Update (props: RouteComponentProps<any>) {
     created={null}
     updated={updated}
     deleted={deleted}
-    eventSource={null}
-    retrieve={retrieve}
-    reset={(/*eventSource: EventSource | null*/) => {
-      retrieveReset()
-      updateReset()
-    }}
     del={del}
     update={update}
-  />
+  />;
 }

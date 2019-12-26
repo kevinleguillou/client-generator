@@ -1,31 +1,32 @@
-import React from 'react'
-import { useFormState } from 'react-use-form-state'
-import { I{{{ucf}}} } from '../../interfaces/{{{ucf}}}'
-import Field from '../Field'
-import { normalizeLinks } from '../../utils/dataAccess'
+import React from "react";
+import { useFormState } from "react-use-form-state";
+import TResource from "./type";
+import Field from "../Field";
+import { normalizeLinks } from "../../utils/dataAccess";
+import { SubmissionError, TError } from "../../utils/types";
 
-interface IFormProps {
-  onSubmit: (item: Partial<I{{{ucf}}}>) => any;
-  initialValues?: Partial<I{{{ucf}}}>;
+interface FormProps {
+  onSubmit: (item: Partial<TResource>) => any;
+  initialValues?: Partial<TResource>;
+  error?: TError;
 }
 
-export default function Form ({onSubmit, initialValues}: IFormProps) {
-  const [formState, {text}] = useFormState<I{{{ucf}}}>(
-    initialValues,
-  )
+export default function Form ({onSubmit, error, initialValues}: FormProps) {
+  const [formState, {text}] = useFormState<TResource>(initialValues);
+  const errors = error instanceof SubmissionError ? error.errors : {} as {[key: string]: string;};
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event: React.FormEvent) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    const {values, validity, errors} = formState
+    const {values, validity, errors} = formState;
     if (!Object.keys(validity).length) {
       // Form is empty
-      return
+      return;
     }
 
     if (Object.keys(errors).length) {
       // Invalid fields values
-      return
+      return;
     }
 
     onSubmit(
@@ -33,7 +34,7 @@ export default function Form ({onSubmit, initialValues}: IFormProps) {
         ...values,
   {{#each formFields}}
     {{#if reference ~}}{{#unless maxCardinality ~}}
-        {{{name}}}: normalizeLinks(values.{{{name}}}),
+        {{{name}}}: normalizeLinks(values["{{{name}}}"]),
     {{/unless ~}}{{/if ~}}
     {{#if number ~}}
         {{{name}}}: (v: string) => parseFloat(v)
@@ -47,8 +48,11 @@ export default function Form ({onSubmit, initialValues}: IFormProps) {
     <form onSubmit={handleSubmit}>
 {{#each formFields}}
         <Field
-          input={text('{{{name}}}')}
-          meta=\{{error: formState.errors['{{{name}}}'], touched: formState.touched['{{{name}}}']}}
+          input={text("{{{name}}}")}
+          meta=\{{
+            error: formState.errors["{{{name}}}"]|| errors["{{{name}}}"],
+            touched: formState.touched["{{{name}}}"],
+          }}
         />
 {{/each}}
 
@@ -56,5 +60,5 @@ export default function Form ({onSubmit, initialValues}: IFormProps) {
         Submit
       </button>
     </form>
-  )
+  );
 }

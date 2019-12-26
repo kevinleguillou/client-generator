@@ -43,15 +43,20 @@ test("Generate a Typescript React app", () => {
     "/components/abc/index.tsx",
     "/components/abc/Create.tsx",
     "/components/abc/Update.tsx",
+    "/components/abc/type.ts",
 
     "/components/Field.tsx",
+    "/components/Links.tsx",
+    "/components/Pagination.tsx",
 
     "/routes/abc.tsx",
 
     "/stores/create.tsx",
     "/stores/delete.tsx",
+    "/stores/fetch.tsx",
     "/stores/index.tsx",
     "/stores/list.tsx",
+    "/stores/retrieve.tsx",
     "/stores/show.tsx",
     "/stores/update.tsx"
   ].forEach(file => expect(fs.existsSync(tmpobj.name + file)).toBe(true));
