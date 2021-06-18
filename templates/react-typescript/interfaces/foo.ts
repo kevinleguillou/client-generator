@@ -1,7 +1,7 @@
 import { IResource } from '../utils/types'
 
 export interface I{{{ucf}}} extends IResource {
-  id?: string;
+  id?: boolean;
 {{#each fields}}
  {{#if readonly}}readonly{{/if}} {{{name}}}?: {{{type}}};
 {{/each}}
