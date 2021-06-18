@@ -5,6 +5,7 @@ import { fetchApi } from '@api/utils/dataAccess'
 
 function * getListHandler () {
     const response = yield call(wrapApiCall, fetchApi, '{{{name}}}')
+    // eslint-disable-next-line no-console
     console.log(response)
     // yield put(setList())
 }

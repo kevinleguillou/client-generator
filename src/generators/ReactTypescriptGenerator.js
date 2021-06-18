@@ -49,7 +49,6 @@ export default class ReactTypescriptGenerator extends BaseGenerator {
     // These directories may already exist
     [
       `${dir}/utils`,
-      `${dir}/config`,
       `${dir}/interfaces`,
       `${dir}/reducers/${lc}`
     ].forEach(dir => this.createDir(dir));
@@ -77,9 +76,6 @@ export default class ReactTypescriptGenerator extends BaseGenerator {
       "utils/dataAccess.ts",
       "utils/types.ts"
     ].forEach(file => this.createFile(file, `${dir}/${file}`, context, false));
-
-    // API config
-    this.createEntrypoint(api.entrypoint, `${dir}/config/entrypoint.ts`);
   }
 
   getDescription(field) {

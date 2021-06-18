@@ -1,4 +1,6 @@
-import { ENTRYPOINT } from '../config/entrypoint'
+import config from '@config/parameters'
+
+const { API_URL } = config
 
 const MIME_TYPE = 'application/ld+json'
 
@@ -10,11 +12,11 @@ export function fetchApi (id: string, options: RequestInit = {}) {
         options.body !== 'undefined' &&
         !(options.body instanceof FormData) &&
         options.headers.get('Content-Type') === null
-    ){
+    ) {
         options.headers.set('Content-Type', MIME_TYPE)
     }
 
-    return fetch(String(new URL(id, ENTRYPOINT)), options).then(response => {
+    return fetch(String(new URL(id, API_URL)), options).then(response => {
         if (response.ok) return response
 
         return response.json().then(
