@@ -12,7 +12,7 @@ const initialState = {
     isFetching: false
 } as {{{ucf}}}State
 
-const {{{ucf}}}Slice = createSlice({
+const {{{lc}}}Slice = createSlice({
     name: '{{{lc}}}',
     initialState,
     reducers: {
@@ -26,8 +26,8 @@ const {{{ucf}}}Slice = createSlice({
     }
 })
 
-export const { getList, setList } = {{{ucf}}}Slice.actions
+export const { getList, setList } = {{{lc}}}Slice.actions
 export type actionsTypes =
     | ReturnType<typeof getList>
     | ReturnType<typeof setList>
-export default {{{ucf}}}Slice.reducer
+export default {{{lc}}}Slice.reducer

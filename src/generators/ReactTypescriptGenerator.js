@@ -11,6 +11,8 @@ export default class ReactTypescriptGenerator extends BaseGenerator {
 
       // reducers
       "reducers/foo/reducer.ts",
+      // sagas
+      "reducers/foo/saga.ts",
 
       // interfaces
       "interfaces/Collection.ts",
@@ -54,7 +56,9 @@ export default class ReactTypescriptGenerator extends BaseGenerator {
 
     [
       // reducers
-      "reducers/%s/reducer.ts"
+      "reducers/%s/reducer.ts",
+      // sagas
+      "reducers/%s/saga.ts"
     ].forEach(pattern => this.createFileFromPattern(pattern, dir, lc, context));
 
     // interface pattern should be camel cased
