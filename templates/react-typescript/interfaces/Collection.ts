@@ -14,7 +14,7 @@ export interface IPagedCollection<T> {
   '{{{hydraPrefix}}}lastPage'?: string;
   '{{{hydraPrefix}}}member'?: T[];
   '{{{hydraPrefix}}}nextPage'?: string;
-  '{{{hydraPrefix}}}search'?: object;
+  '{{{hydraPrefix}}}search'?: Record<string, unknown>;
   '{{{hydraPrefix}}}totalItems'?: number;
   '{{{hydraPrefix}}}view'?: IPagination;
 }

@@ -1,7 +1,7 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
 import { getList, setList } from './reducer'
 import wrapApiCall from '@services/api/sagaWrapper'
-import { fetchApi } from '@api/utils/dataAccess'
+import { fetchApi } from '@services/api/utils/dataAccess'
 import { IPagedCollection } from '../../interfaces/Collection'
 import { I{{{ucf}}} } from '../../interfaces/{{{ucf}}}'
 
